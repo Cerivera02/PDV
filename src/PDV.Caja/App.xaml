@@ -1,0 +1,349 @@
+﻿<Application x:Class="PDV.Caja.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="Recursos/Logo.xaml"/>
+        </ResourceDictionary.MergedDictionaries>
+
+        <!-- Ícono de todas las ventanas (se asigna en App.xaml.cs) -->
+        <BitmapImage x:Key="Icono" UriSource="pack://application:,,,/Recursos/pdv.ico"/>
+
+        <!-- Colores -->
+        <SolidColorBrush x:Key="Primario" Color="#1F4E79"/>
+        <SolidColorBrush x:Key="PrimarioClaro" Color="#DCE8F5"/>
+        <SolidColorBrush x:Key="Fondo" Color="#F3F5F8"/>
+        <SolidColorBrush x:Key="Peligro" Color="#B42318"/>
+        <SolidColorBrush x:Key="Exito" Color="#1A7F37"/>
+        <SolidColorBrush x:Key="Aviso" Color="#B54708"/>
+        <SolidColorBrush x:Key="TextoSuave" Color="#5B6472"/>
+        <SolidColorBrush x:Key="Borde" Color="#C9D1DB"/>
+
+        <!-- Botón base: compacto y redondeado (como "Hoy / Ayer" de Tickets).
+             Los botones principales grandes (COBRAR, Entrar, formas de pago, tarjetas del menú) ponen su propio tamaño. -->
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="MinWidth" Value="110"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Borde}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="borde" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="borde" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="borde" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="borde" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="BotonVerde" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource Exito}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Exito}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="BotonAzul" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource Primario}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Primario}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="BotonRojo" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Peligro}"/>
+            <Setter Property="Foreground" Value="{StaticResource Peligro}"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="MinHeight" Value="46"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="MinHeight" Value="46"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <!-- ============================================================
+             Listas para elegir (ComboBox), al estilo react-select:
+             borde redondeado, contorno azul al enfocar, flechita con separador,
+             lista con sombra, opción resaltada al pasar el mouse.
+             Extras en Ventanas/Select.cs: v:Select.Pista, v:Select.Buscable, v:Select.Limpiable
+             ============================================================ -->
+        <SolidColorBrush x:Key="SelectBordeHover" Color="#9AA3AF"/>
+        <SolidColorBrush x:Key="SelectAnillo" Color="#401F4E79"/>
+        <SolidColorBrush x:Key="SelectFlecha" Color="#8A94A3"/>
+
+        <!-- Toda la caja abre y cierra la lista -->
+        <Style x:Key="SelectAbrir" TargetType="ToggleButton">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="ClickMode" Value="Press"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="Transparent"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- La ✕ para dejarlo sin elegir -->
+        <Style x:Key="SelectLimpiar" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource SelectFlecha}"/>
+            <Setter Property="ToolTip" Value="Dejarlo sin elegir"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent" Width="34">
+                            <Path x:Name="equis" Data="M 0 0 L 9 9 M 9 0 L 0 9" Stroke="{TemplateBinding Foreground}" StrokeThickness="2"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="equis" Property="Stroke" Value="{StaticResource Peligro}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Texto donde se escribe (listas buscables o editables): sin borde propio -->
+        <Style x:Key="SelectTexto" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <ScrollViewer x:Name="PART_ContentHost" Focusable="False" VerticalAlignment="Center"
+                                      HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="Padding" Value="12,8,8,8"/>
+            <Setter Property="MinHeight" Value="46"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Borde}"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="MaxDropDownHeight" Value="360"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid SnapsToDevicePixels="True">
+                            <!-- Contorno suave cuando está enfocada -->
+                            <Border x:Name="anillo" Margin="-3" CornerRadius="11" BorderThickness="3"
+                                    BorderBrush="{StaticResource SelectAnillo}" Visibility="Hidden"/>
+                            <Border x:Name="caja" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1" CornerRadius="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton Grid.ColumnSpan="3" Style="{StaticResource SelectAbrir}"
+                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                    <ContentPresenter x:Name="contenido" Margin="{TemplateBinding Padding}" IsHitTestVisible="False"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="Left"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"/>
+                                    <TextBox x:Name="PART_EditableTextBox" Style="{StaticResource SelectTexto}" Margin="{TemplateBinding Padding}"
+                                             Visibility="Collapsed" IsReadOnly="{TemplateBinding IsReadOnly}"
+                                             Foreground="{TemplateBinding Foreground}" CaretBrush="{TemplateBinding Foreground}"/>
+                                    <TextBlock x:Name="pista" Text="{TemplateBinding v:Select.Pista}" Margin="{TemplateBinding Padding}"
+                                               Foreground="#9AA3AF" VerticalAlignment="Center" IsHitTestVisible="False"
+                                               TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+                                    <Button x:Name="PART_Limpiar" Grid.Column="1" Style="{StaticResource SelectLimpiar}" Visibility="Collapsed"/>
+                                    <Grid Grid.Column="2" Width="42" IsHitTestVisible="False">
+                                        <Rectangle Width="1" Fill="#D6DCE4" HorizontalAlignment="Left" Margin="0,10"/>
+                                        <Path x:Name="flecha" Data="M 0 0 L 6 6 L 12 0" Stroke="{StaticResource SelectFlecha}" StrokeThickness="2"
+                                              StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <Popup x:Name="PART_Popup" Placement="Bottom" VerticalOffset="4" AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Fade" IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                <!-- El margen deja lugar a la sombra -->
+                                <Border Margin="0,0,10,10" MinWidth="{Binding ActualWidth, ElementName=caja}" MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="White" BorderBrush="#D6DCE4" BorderThickness="1" CornerRadius="8">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="14" ShadowDepth="3" Direction="270" Opacity="0.18"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <ScrollViewer Margin="0,4" SnapsToDevicePixels="True">
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
+                                        <TextBlock x:Name="sinOpciones" Text="No se encontró nada" Margin="14,12" Foreground="#9AA3AF" Visibility="Collapsed"/>
+                                    </Grid>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="caja" Property="BorderBrush" Value="{StaticResource SelectBordeHover}"/>
+                                <Setter TargetName="flecha" Property="Stroke" Value="#4B5563"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="caja" Property="BorderBrush" Value="{StaticResource Primario}"/>
+                                <Setter TargetName="anillo" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="caja" Property="BorderBrush" Value="{StaticResource Primario}"/>
+                                <Setter TargetName="anillo" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="flecha" Property="Stroke" Value="{StaticResource Primario}"/>
+                                <Setter TargetName="flecha" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEditable" Value="True">
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="contenido" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="sinOpciones" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <!-- ✕: solo si se pidió y hay algo elegido (el segundo trigger gana) -->
+                            <Trigger Property="v:Select.Limpiable" Value="True">
+                                <Setter TargetName="PART_Limpiar" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="SelectedItem" Value="{x:Null}">
+                                <Setter TargetName="PART_Limpiar" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <!-- Pista: sin nada elegido y sin texto escrito -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="SelectedItem" Value="{x:Null}"/>
+                                    <Condition Property="Text" Value=""/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="pista" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="fondo" Background="Transparent" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="fondo" Property="Background" Value="{StaticResource PrimarioClaro}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="fondo" Property="Background" Value="{StaticResource Primario}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="0,4,24,4"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E3E7ED"/>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="RowHeight" Value="42"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Borde}"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="BorderBrush" Value="#D6DCE4"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimarioClaro}"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+      </ResourceDictionary>
+    </Application.Resources>
+</Application>

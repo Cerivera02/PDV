@@ -1,0 +1,87 @@
+<Window x:Class="PDV.Caja.Ventanas.ProductosWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+        Title="Punto de Venta - Productos y mercancía" Width="1300" Height="780" FontSize="17"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="{StaticResource Fondo}"
+        PreviewKeyDown="Ventana_PreviewKeyDown">
+    <DockPanel Margin="20,16">
+        <!-- Título -->
+        <DockPanel DockPanel.Dock="Top">
+            <Button Content="🗂  Departamentos" DockPanel.Dock="Right" Click="Departamentos_Click"
+                    ToolTip="Agrupar productos: Abarrotes, Lácteos, Limpieza…"/>
+            <TextBlock Text="Productos y mercancía" FontSize="30" FontWeight="SemiBold" Foreground="{StaticResource Primario}" VerticalAlignment="Center"/>
+        </DockPanel>
+
+        <!-- Búsqueda -->
+        <Grid DockPanel.Dock="Top" Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <TextBox x:Name="txtBuscar" FontSize="22" TextChanged="Buscar_TextChanged" KeyDown="Buscar_KeyDown"/>
+                <TextBlock x:Name="lblPista" Text="🔍  Buscar: escriba el nombre o pase el código por el lector" FontSize="18"
+                           Margin="12,0,0,0" VerticalAlignment="Center" Foreground="#A0A8B3" IsHitTestVisible="False"/>
+            </Grid>
+            <ComboBox x:Name="cmbDepartamento" Grid.Column="1" Width="260" v:Select.Buscable="True" Margin="10,0,0,0" SelectionChanged="Filtro_Changed"
+                      ToolTip="Ver solo un departamento"/>
+            <ToggleButton x:Name="btnPocos" Grid.Column="2" Margin="10,0,0,0" Padding="14,8" FontSize="16"
+                          Background="White" BorderBrush="{StaticResource Borde}" Foreground="{StaticResource Aviso}" Cursor="Hand"
+                          Checked="Filtro_Changed" Unchecked="Filtro_Changed" Content="⚠ Se están acabando"
+                          ToolTip="Ver solo los productos que ya quedan pocos"/>
+        </Grid>
+
+        <!-- Acciones -->
+        <Border DockPanel.Dock="Top" Background="White" CornerRadius="10" Padding="10,6" Margin="0,14,0,0" BorderBrush="#D6DCE4" BorderThickness="1">
+            <WrapPanel>
+                <TextBlock Text="Producto:" VerticalAlignment="Center" Margin="8,0,4,0" Foreground="{StaticResource TextoSuave}"/>
+                <Button Content="➕  Nuevo producto" Style="{StaticResource BotonVerde}" Click="Nuevo_Click"/>
+                <Button Content="✏  Cambiar datos o precio" Click="Editar_Click"/>
+                <Button Content="🏷  Ofertas" Click="Ofertas_Click" ToolTip="Precio de oferta por fechas, 2x1 / 3x2 y mayoreo"/>
+                <Button Content="💲  Precios anteriores" Click="Precios_Click" ToolTip="Cada vez que cambió el precio o el costo: cuándo, de cuánto a cuánto y quién"/>
+                <Button Content="🗑  Quitar producto" Style="{StaticResource BotonRojo}" Click="Quitar_Click"/>
+                <Rectangle Width="1" Fill="#D6DCE4" Margin="12,8"/>
+                <TextBlock Text="Mercancía:" VerticalAlignment="Center" Margin="4,0,4,0" Foreground="{StaticResource TextoSuave}"/>
+                <Button Content="📦  Llegó mercancía" Click="LlegoMercancia_Click"/>
+                <Button Content="🥀  Se echó a perder" Click="SeEchoAPerder_Click"/>
+                <Button Content="🔢  Contar lo que hay" Click="Contar_Click"/>
+                <Button Content="🕘  Entradas y salidas" Click="Historial_Click" ToolTip="Todo lo que ha entrado y salido de este producto"/>
+            </WrapPanel>
+        </Border>
+
+        <TextBlock x:Name="lblConteo" DockPanel.Dock="Bottom" Margin="4,8,0,0" Foreground="{StaticResource TextoSuave}" FontSize="15"/>
+
+        <Grid Margin="0,12,0,0">
+            <DataGrid x:Name="grid" MouseDoubleClick="Editar_Click">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BajoMinimo}" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource Aviso}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="Departamento" Binding="{Binding DepartamentoNombre}" Width="190"/>
+                    <DataGridTextColumn Header="Precio" Binding="{Binding PrecioTexto}" Width="170"/>
+                    <DataGridTextColumn Header="Oferta hoy" Binding="{Binding OfertaTexto}" Width="260">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource Exito}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Hay en tienda" Binding="{Binding HayTexto}" Width="270"/>
+                    <DataGridTextColumn Header="Código" Binding="{Binding CodigoBarras}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock x:Name="lblVacio" FontSize="20" Foreground="{StaticResource TextoSuave}" HorizontalAlignment="Center"
+                       VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"/>
+        </Grid>
+    </DockPanel>
+</Window>

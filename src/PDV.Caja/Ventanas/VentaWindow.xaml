@@ -1,0 +1,182 @@
+<Window x:Class="PDV.Caja.Ventanas.VentaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+        Title="Punto de Venta - Vender" Width="1360" Height="800" WindowState="Maximized" FontSize="17"
+        Background="{StaticResource Fondo}" PreviewKeyDown="Ventana_PreviewKeyDown" PreviewTextInput="Ventana_PreviewTextInput">
+    <Window.Resources>
+        <!-- Botón de la barra de herramientas: plano, se resalta al pasar el mouse -->
+        <Style TargetType="v:BotonBarra" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="MinWidth" Value="104"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource PrimarioClaro}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TituloGrupo" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource TextoSuave}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+        <Style x:Key="Separador" TargetType="Rectangle">
+            <Setter Property="Width" Value="1"/>
+            <Setter Property="Fill" Value="#D6DCE4"/>
+            <Setter Property="Margin" Value="12,6"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <!-- Encabezado -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource Primario}" Padding="20,10">
+            <DockPanel>
+                <TextBlock x:Name="lblReloj" DockPanel.Dock="Right" Foreground="White" FontSize="18" VerticalAlignment="Center"/>
+                <Image Source="{StaticResource Logo}" Width="34" Height="34" Margin="0,0,14,0" DockPanel.Dock="Left"/>
+                <TextBlock x:Name="lblEncabezado" Foreground="White" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Barra de herramientas: todas las acciones, agrupadas -->
+        <Border DockPanel.Dock="Top" Background="White" BorderBrush="#D6DCE4" BorderThickness="0,0,0,1" Padding="12,6">
+            <DockPanel>
+                <!-- Salir, siempre a la derecha -->
+                <StackPanel DockPanel.Dock="Right">
+                    <TextBlock Text=" " Style="{StaticResource TituloGrupo}"/>
+                    <v:BotonBarra Icono="🚪" Texto="Salir" Click="Salir_Click" ToolTip="Salir (la caja sigue abierta)"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Venta actual -->
+                    <StackPanel>
+                        <TextBlock Text="VENTA" Style="{StaticResource TituloGrupo}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <v:BotonBarra Icono="🧾" Texto="Nueva cuenta" Tecla="F1" Click="Boton_Click"
+                                          ToolTip="Deja esta cuenta en espera y empieza otra para el siguiente cliente  (F1)"/>
+                            <v:BotonBarra Icono="👤" Texto="Cliente" Tecla="F11" Click="Boton_Click"/>
+                            <v:BotonBarra Icono="🔍" Texto="Buscar" Tecla="F3" Click="Boton_Click" ToolTip="Buscar producto por nombre  (F3)"/>
+                            <v:BotonBarra x:Name="btnCantidad" Icono="✏" Texto="Cantidad" Tecla="F4" Click="Boton_Click" ToolTip="Cambiar cantidad  (F4)"/>
+                            <v:BotonBarra x:Name="btnPrecio" Icono="💲" Texto="Precio" Click="Precio_Click" ToolTip="Cambiar el precio del producto marcado, solo en esta cuenta"/>
+                            <v:BotonBarra Icono="⚖" Texto="Pesar" Tecla="F2" Click="Boton_Click" ToolTip="Ver el peso de la báscula en grande  (F2)"/>
+                            <v:BotonBarra Icono="✖" Texto="Quitar" Tecla="Supr" Tag="Delete" Click="Boton_Click" ToolTip="Quitar producto  (Supr o F6)"/>
+                            <v:BotonBarra Icono="🗑" Texto="Borrar cuenta" Peligro="True" Click="BorrarCuenta_Click"
+                                          ToolTip="Borrar todos los productos de esta cuenta (pide confirmación)"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Rectangle Style="{StaticResource Separador}"/>
+                    <!-- Caja -->
+                    <StackPanel>
+                        <TextBlock Text="CAJA" Style="{StaticResource TituloGrupo}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <v:BotonBarra Icono="🗂" Texto="Tickets" Tecla="F5" Click="Boton_Click" ToolTip="Ver los tickets ya cobrados y volver a imprimirlos  (F5)"/>
+                            <v:BotonBarra Icono="↩" Texto="Cancelar venta" Tecla="F9" Click="Boton_Click" ToolTip="Cancelar una venta ya cobrada  (F9)"/>
+                            <v:BotonBarra Icono="💵" Texto="Recibir abono" Click="RecibirAbono_Click" ToolTip="Recibir abono de un cliente con crédito"/>
+                            <v:BotonBarra Icono="💸" Texto="Sacar dinero" Tecla="F7" Click="Boton_Click" ToolTip="Sacar dinero de la caja  (F7)"/>
+                            <v:BotonBarra Icono="📊" Texto="¿Cómo voy?" Tecla="F8" Click="Boton_Click" ToolTip="Ver cómo van las ventas de hoy  (F8)"/>
+                            <v:BotonBarra Icono="🔒" Texto="Cerrar caja" Tecla="F10" Click="Boton_Click" ToolTip="Cerrar caja al terminar el día  (F10)"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Abajo: peso en vivo (izquierda) y atajos de teclado -->
+        <Border DockPanel.Dock="Bottom" Background="#E4E9F0" BorderBrush="#D6DCE4" BorderThickness="0,1,0,0" Padding="10,6">
+            <DockPanel>
+                <Border x:Name="panelPeso" DockPanel.Dock="Left" Background="White" CornerRadius="8" Padding="12,4" Margin="0,0,14,0"
+                        Cursor="Hand" MouseLeftButtonUp="Peso_Click" ToolTip="Peso de la báscula en vivo. Clic para ver en grande (F2)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚖" FontSize="20" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="lblPeso" Text="—" FontSize="22" FontWeight="Bold" MinWidth="120"
+                                   VerticalAlignment="Center" Foreground="{StaticResource Primario}"/>
+                        <TextBlock x:Name="lblPesoEstado" FontSize="14" VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{StaticResource TextoSuave}"/>
+                    </StackPanel>
+                </Border>
+                <TextBlock x:Name="lblAtajos" FontSize="14" Foreground="#374151" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Panel derecho: total, cliente, cobrar y avisos -->
+        <Border DockPanel.Dock="Right" Width="400" Background="White" BorderBrush="#D6DCE4" BorderThickness="1,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="22,18">
+                    <TextBlock Text="TOTAL A PAGAR" FontSize="18" Foreground="{StaticResource TextoSuave}"/>
+                    <TextBlock x:Name="lblTotal" Text="$0.00" FontSize="64" FontWeight="Bold" Foreground="{StaticResource Primario}"/>
+                    <TextBlock x:Name="lblArticulos" Text="0 artículos" FontSize="18" Foreground="{StaticResource TextoSuave}"/>
+                    <TextBlock x:Name="lblAhorro" FontSize="19" FontWeight="SemiBold" Foreground="{StaticResource Exito}"
+                               Margin="0,6,0,0" Visibility="Collapsed"/>
+
+                    <!-- Cliente elegido -->
+                    <Border x:Name="panelCliente" Background="{StaticResource PrimarioClaro}" CornerRadius="10" Padding="14,10"
+                            Margin="0,12,0,0" Visibility="Collapsed">
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Content="✖" ToolTip="Quitar cliente (venta a público en general)"
+                                    MinWidth="0" MinHeight="0" Padding="10,4" Margin="6,0,0,0" Focusable="False"
+                                    VerticalAlignment="Top" Click="QuitarCliente_Click"/>
+                            <StackPanel>
+                                <TextBlock x:Name="lblClienteNombre" FontSize="19" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="lblClienteDetalle" FontSize="15" TextWrapping="Wrap" Foreground="#374151"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+
+                    <Button Content="💵  COBRAR   (F12)" Style="{StaticResource BotonVerde}" Focusable="False"
+                            FontSize="26" MinHeight="90" Margin="0,18,0,0" Tag="F12" Click="Boton_Click"/>
+
+                    <!-- Cambio de la última venta -->
+                    <Border x:Name="panelCambio" Background="#E7F5EC" CornerRadius="10" Padding="16,12" Margin="0,16,0,0" Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="Entregue de cambio:" FontSize="18"/>
+                            <TextBlock x:Name="lblCambio" FontSize="44" FontWeight="Bold" Foreground="{StaticResource Exito}"/>
+                            <TextBlock x:Name="lblUltimoFolio" FontSize="14" Foreground="{StaticResource TextoSuave}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Avisos -->
+                    <Border x:Name="panelEstado" CornerRadius="10" Padding="14,10" Margin="0,16,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="lblEstado" TextWrapping="Wrap" FontSize="17"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Captura y lista de productos -->
+        <DockPanel Margin="20,16">
+            <TextBlock DockPanel.Dock="Top" Text="Pase el producto por el lector, o escriba el código y presione Enter:"
+                       FontSize="17" Foreground="{StaticResource TextoSuave}" Margin="2,0,0,6"/>
+            <Grid DockPanel.Dock="Top" Margin="0,0,0,10">
+                <TextBox x:Name="txtCodigo" FontSize="30" Padding="12,8" KeyDown="Codigo_KeyDown" TextChanged="Codigo_TextChanged"/>
+                <TextBlock x:Name="lblPista" Text="Código del producto…" FontSize="28" Margin="18,0,0,0" VerticalAlignment="Center"
+                           Foreground="#A0A8B3" IsHitTestVisible="False"/>
+            </Grid>
+
+            <!-- Cuentas abiertas: una pestaña por cuenta; la que se está viendo va en azul -->
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                <TextBlock x:Name="lblEnEspera" DockPanel.Dock="Right" FontSize="16" FontWeight="SemiBold"
+                           Foreground="{StaticResource Aviso}" VerticalAlignment="Center"/>
+                <WrapPanel x:Name="panelCuentas"/>
+            </DockPanel>
+
+            <Grid>
+                <DataGrid x:Name="gridLineas" FontSize="20" RowHeight="48">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Producto" Binding="{Binding Descripcion}" Width="*"/>
+                        <DataGridTextColumn Header="Cantidad" Binding="{Binding CantidadTexto}" Width="160"/>
+                        <DataGridTextColumn Header="Precio" Binding="{Binding PrecioTexto}" Width="170"/>
+                        <DataGridTextColumn Header="Importe" Binding="{Binding Importe, StringFormat=C2}" Width="150"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel x:Name="panelVacio" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False">
+                    <TextBlock Text="🛒" FontSize="64" HorizontalAlignment="Center" Opacity="0.5"/>
+                    <TextBlock Text="La venta está vacía" FontSize="26" HorizontalAlignment="Center" Foreground="{StaticResource TextoSuave}"/>
+                    <TextBlock Text="Pase el primer producto por el lector" FontSize="18" HorizontalAlignment="Center" Foreground="{StaticResource TextoSuave}"/>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</Window>

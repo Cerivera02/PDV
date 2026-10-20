@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PDV.Core\PDV.Core.csproj" />
+    <ProjectReference Include="..\PDV.Hardware\PDV.Hardware.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.13" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- Ícono del .exe, del acceso directo y de la barra de tareas -->
+    <ApplicationIcon>Recursos\pdv.ico</ApplicationIcon>
+    <AssemblyTitle>Punto de Venta</AssemblyTitle>
+    <Product>Punto de Venta</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Recursos\pdv.ico" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,36 @@
+<Window x:Class="PDV.Caja.Ventanas.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Punto de Venta" Width="500" SizeToContent="Height" FontSize="18"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Fondo}">
+    <StackPanel Margin="36,28">
+        <Image Source="{StaticResource Logo}" Width="96" Height="96" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+        <TextBlock Text="Punto de Venta" FontSize="32" FontWeight="SemiBold" HorizontalAlignment="Center"
+                   Foreground="{StaticResource Primario}"/>
+        <TextBlock Text="Escriba su usuario y su contraseña" HorizontalAlignment="Center" Margin="0,4,0,24"
+                   Foreground="{StaticResource TextoSuave}"/>
+
+        <TextBlock Text="Usuario" FontWeight="SemiBold" Margin="0,0,0,6"/>
+        <TextBox x:Name="txtUsuario" FontSize="22"/>
+        <TextBlock Text="Contraseña" FontWeight="SemiBold" Margin="0,16,0,6"/>
+        <PasswordBox x:Name="txtPassword" FontSize="22" PreviewKeyDown="Password_PreviewKeyDown" GotKeyboardFocus="Password_GotKeyboardFocus"/>
+        <TextBlock x:Name="lblMayusculas" Text="⚠ Las MAYÚSCULAS están activadas" Foreground="{StaticResource Aviso}"
+                   FontSize="15" Margin="2,6,0,0" Visibility="Collapsed"/>
+
+        <Border x:Name="panelError" Background="#FDECEA" CornerRadius="8" Padding="12,10" Margin="0,16,0,0" Visibility="Collapsed">
+            <TextBlock x:Name="lblError" Foreground="{StaticResource Peligro}" TextWrapping="Wrap"/>
+        </Border>
+
+        <Button x:Name="btnEntrar" Content="Entrar" IsDefault="True" Style="{StaticResource BotonVerde}"
+                FontSize="22" MinHeight="60" Margin="0,24,0,0" Click="Entrar_Click"/>
+
+        <DockPanel Margin="0,20,0,0">
+            <Button Content="⚙ Configuración" DockPanel.Dock="Right" FontSize="13" MinHeight="30" MinWidth="0"
+                    Padding="8,4" Margin="0" Background="Transparent" BorderThickness="0"
+                    Foreground="{StaticResource TextoSuave}" Click="Configurar_Click"
+                    ToolTip="Solo para el encargado: dirección del servidor, impresora y báscula"/>
+            <TextBlock x:Name="lblCaja" FontSize="13" Foreground="{StaticResource TextoSuave}" VerticalAlignment="Center"/>
+        </DockPanel>
+    </StackPanel>
+</Window>

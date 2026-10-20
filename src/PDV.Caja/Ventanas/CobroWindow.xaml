@@ -1,0 +1,70 @@
+<Window x:Class="PDV.Caja.Ventanas.CobroWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+        Title="Cobrar" Width="660" SizeToContent="Height" ResizeMode="NoResize" FontSize="18"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource Fondo}">
+    <StackPanel Margin="28,22">
+        <TextBlock Text="Total a pagar" Foreground="{StaticResource TextoSuave}"/>
+        <TextBlock x:Name="lblTotal" FontSize="56" FontWeight="Bold" Foreground="{StaticResource Primario}"/>
+        <TextBlock x:Name="lblCliente" FontSize="17" Foreground="{StaticResource TextoSuave}" Visibility="Collapsed"/>
+
+        <!-- ¿Cómo paga? -->
+        <TextBlock Text="¿Cómo paga el cliente?" FontWeight="SemiBold" Margin="0,12,0,6"/>
+        <UniformGrid x:Name="gridModos" Columns="2">
+            <Button x:Name="btnEfectivo" Content="💵  Efectivo" FontSize="22" MinHeight="64" Focusable="False" Click="ModoEfectivo_Click"/>
+            <Button x:Name="btnTarjeta" Content="💳  Tarjeta" FontSize="22" MinHeight="64" Focusable="False" Click="ModoTarjeta_Click"/>
+            <Button x:Name="btnCredito" Content="📒  Crédito" FontSize="22" MinHeight="64" Focusable="False" Click="ModoCredito_Click" Visibility="Collapsed"/>
+        </UniformGrid>
+
+        <!-- Efectivo -->
+        <StackPanel x:Name="panelEfectivo" Margin="0,14,0,0">
+            <TextBlock Text="¿Con cuánto le paga?" FontWeight="SemiBold" Margin="0,0,0,6"/>
+            <TextBox x:Name="txtEfectivo" v:EntradaNumerica.SoloNumeros="True" FontSize="32" TextChanged="Montos_TextChanged"/>
+        </StackPanel>
+
+        <!-- Tarjeta -->
+        <StackPanel x:Name="panelTarjeta" Margin="0,14,0,0" Visibility="Collapsed">
+            <Border Background="#EEF2F7" CornerRadius="10" Padding="16,12">
+                <TextBlock x:Name="lblInstruccionTarjeta" TextWrapping="Wrap" FontSize="19"/>
+            </Border>
+            <StackPanel x:Name="panelMixto" Visibility="Collapsed" Margin="0,12,0,0">
+                <TextBlock Text="¿Cuánto se cobra con tarjeta?" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <TextBox x:Name="txtTarjeta" v:EntradaNumerica.SoloNumeros="True" FontSize="24" TextChanged="Montos_TextChanged"/>
+                <TextBlock Text="¿Y cuánto le da en efectivo?" FontWeight="SemiBold" Margin="0,12,0,6"/>
+                <TextBox x:Name="txtEfectivoMixto" v:EntradaNumerica.SoloNumeros="True" FontSize="24" TextChanged="Montos_TextChanged"/>
+            </StackPanel>
+            <TextBlock Text="Número de autorización (opcional)" FontSize="15" Foreground="{StaticResource TextoSuave}" Margin="2,12,0,4"/>
+            <TextBox x:Name="txtReferencia" FontSize="18"/>
+            <CheckBox x:Name="chkMixto" Content="Paga una parte con tarjeta y otra en efectivo" FontSize="16" Margin="2,12,0,0"
+                      Checked="Mixto_Changed" Unchecked="Mixto_Changed"/>
+        </StackPanel>
+
+        <!-- Crédito -->
+        <StackPanel x:Name="panelCredito" Margin="0,14,0,0" Visibility="Collapsed">
+            <Border Background="#FFF4E5" CornerRadius="10" Padding="16,12">
+                <TextBlock x:Name="lblInstruccionCredito" TextWrapping="Wrap" FontSize="19"/>
+            </Border>
+            <CheckBox x:Name="chkAbonoAhora" Content="Paga una parte ahorita en efectivo" FontSize="16" Margin="2,12,0,0"
+                      Checked="AbonoAhora_Changed" Unchecked="AbonoAhora_Changed"/>
+            <StackPanel x:Name="panelAbonoAhora" Visibility="Collapsed" Margin="0,10,0,0">
+                <TextBlock Text="¿Cuánto paga ahorita en efectivo?" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                <TextBox x:Name="txtEfectivoCredito" v:EntradaNumerica.SoloNumeros="True" FontSize="24" TextChanged="Montos_TextChanged"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Resultado -->
+        <Border x:Name="panelResultado" CornerRadius="10" Padding="16,10" Margin="0,16,0,0">
+            <StackPanel>
+                <TextBlock x:Name="lblResultadoTitulo" FontSize="18"/>
+                <TextBlock x:Name="lblResultado" FontSize="44" FontWeight="Bold"/>
+            </StackPanel>
+        </Border>
+
+        <DockPanel Margin="0,18,0,0">
+            <Button Content="Regresar  (Esc)" IsCancel="True" DockPanel.Dock="Left" FontSize="20" MinHeight="64" Padding="20,6"/>
+            <Button x:Name="btnCobrar" Content="✔  Cobrar   (Enter)" IsDefault="True" Style="{StaticResource BotonVerde}"
+                    FontSize="22" MinHeight="64" Click="Aceptar_Click"/>
+        </DockPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,90 @@
+<Window x:Class="PDV.Caja.Ventanas.ClienteWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+        Title="Cliente" Width="620" SizeToContent="Height" MaxHeight="940" ResizeMode="NoResize" FontSize="17"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource Fondo}">
+    <Window.Resources>
+        <Style x:Key="Etiqueta" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,14,0,5"/>
+        </Style>
+        <Style x:Key="Ayuda" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextoSuave}"/>
+            <Setter Property="Margin" Value="2,4,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="Seccion" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource Primario}"/>
+            <Setter Property="Margin" Value="0,22,0,0"/>
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,20">
+            <TextBlock x:Name="lblTitulo" FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource Primario}"/>
+
+            <TextBlock Text="Nombre" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtNombre"/>
+            <TextBlock Text="Teléfono" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtTelefono"/>
+            <TextBlock Text="Dirección (opcional)" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtDireccion"/>
+
+            <!-- Crédito -->
+            <TextBlock Text="📒 Crédito" Style="{StaticResource Seccion}"/>
+            <TextBlock Text="¿Tiene crédito?" Style="{StaticResource Etiqueta}"/>
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="rbSinCredito" Content="No" GroupName="credito" Checked="Credito_Checked"/>
+                <RadioButton x:Name="rbConCredito" Content="Sí" GroupName="credito" Checked="Credito_Checked"/>
+            </StackPanel>
+            <StackPanel x:Name="panelLimite">
+                <TextBlock Text="Límite de crédito (hasta cuánto puede deber)" Style="{StaticResource Etiqueta}"/>
+                <TextBox x:Name="txtLimite" v:EntradaNumerica.SoloNumeros="True"/>
+                <TextBlock x:Name="lblDebe" Style="{StaticResource Ayuda}"/>
+            </StackPanel>
+
+            <!-- Precio especial -->
+            <TextBlock Text="🏷 Precio especial" Style="{StaticResource Seccion}"/>
+            <TextBlock Text="Si un producto tiene una promoción mejor, se le aplica la promoción (no se juntan)." Style="{StaticResource Ayuda}"/>
+            <RadioButton x:Name="rbPrecioNormal" Content="Precio normal" GroupName="precio" Margin="0,10,0,4" Checked="Precio_Checked"/>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                <RadioButton x:Name="rbDescuento" Content="Descuento en todo:" GroupName="precio" Margin="0,0,10,0" Checked="Precio_Checked"/>
+                <TextBox x:Name="txtDescuento" Width="90" v:EntradaNumerica.SoloNumeros="True"/>
+                <TextBlock Text="%" VerticalAlignment="Center" Margin="8,0,0,0" FontSize="18"/>
+            </StackPanel>
+            <RadioButton x:Name="rbMayoreo" Content="Siempre precio de mayoreo (aunque lleve una pieza)" GroupName="precio" Margin="0,4,0,0" Checked="Precio_Checked"/>
+
+            <!-- Factura -->
+            <Expander x:Name="expFactura" Header="🧾 Datos para factura (opcional)" Margin="0,22,0,0" FontSize="18">
+                <StackPanel Margin="8,4,0,0">
+                    <TextBlock Text="Por ahora solo se guardan. Para timbrar facturas se necesita un servicio de facturación (PAC)." Style="{StaticResource Ayuda}"/>
+                    <TextBlock Text="RFC" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtRfc" CharacterCasing="Upper" MaxLength="13"/>
+                    <TextBlock Text="Razón social (como aparece en su constancia)" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtRazonSocial" CharacterCasing="Upper"/>
+                    <TextBlock Text="Código postal fiscal" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtCp" MaxLength="5" v:EntradaNumerica.SoloNumeros="True"/>
+                    <TextBlock Text="Régimen fiscal" Style="{StaticResource Etiqueta}"/>
+                    <ComboBox x:Name="cmbRegimen" v:Select.Buscable="True" v:Select.Limpiable="True" v:Select.Pista="Escriba o elija el régimen (ej. 612 o RESICO)"/>
+                    <TextBlock Text="Uso de CFDI" Style="{StaticResource Etiqueta}"/>
+                    <ComboBox x:Name="cmbUso" v:Select.Buscable="True" v:Select.Pista="Escriba o elija el uso (ej. G03)"/>
+                    <TextBlock Text="Correo para enviar la factura" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtCorreo"/>
+                </StackPanel>
+            </Expander>
+
+            <Border x:Name="panelError" Background="#FDECEA" CornerRadius="8" Padding="12,10" Margin="0,18,0,0" Visibility="Collapsed">
+                <TextBlock x:Name="lblError" Foreground="{StaticResource Peligro}" TextWrapping="Wrap"/>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="Cancelar" IsCancel="True"/>
+                <Button x:Name="btnGuardar" Content="✔  Guardar" IsDefault="True" Style="{StaticResource BotonVerde}" MinWidth="150" Click="Guardar_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

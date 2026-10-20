@@ -1,0 +1,82 @@
+<Window x:Class="PDV.Caja.Ventanas.ProductoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="clr-namespace:PDV.Caja.Ventanas"
+        Title="Producto" Width="600" SizeToContent="Height" MaxHeight="900" ResizeMode="NoResize" FontSize="17"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="{StaticResource Fondo}">
+    <Window.Resources>
+        <Style x:Key="Etiqueta" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,14,0,5"/>
+        </Style>
+        <Style x:Key="Ayuda" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource TextoSuave}"/>
+            <Setter Property="Margin" Value="2,4,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,20">
+            <TextBlock x:Name="lblTitulo" FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource Primario}"/>
+
+            <TextBlock Text="Código de barras" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtCodigo"/>
+            <TextBlock Text="Pase el producto por el lector, o escriba el código que trae." Style="{StaticResource Ayuda}"/>
+
+            <TextBlock Text="Nombre" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtNombre"/>
+            <TextBlock Text="Como quiere que salga en el ticket. Ejemplo: Coca-Cola 600 ml" Style="{StaticResource Ayuda}"/>
+
+            <TextBlock Text="¿Cómo se vende?" Style="{StaticResource Etiqueta}"/>
+            <StackPanel Orientation="Horizontal">
+                <RadioButton x:Name="rbPieza" Content="Por pieza" GroupName="venta" Checked="Venta_Checked"/>
+                <RadioButton x:Name="rbKilo" Content="Por kilo (se pesa)" GroupName="venta" Checked="Venta_Checked"/>
+            </StackPanel>
+
+            <TextBlock x:Name="lblPrecio" Text="Precio de venta" Style="{StaticResource Etiqueta}"/>
+            <TextBox x:Name="txtPrecio" v:EntradaNumerica.SoloNumeros="True" FontSize="22"/>
+            <TextBlock Text="El precio que paga el cliente (con IVA incluido)." Style="{StaticResource Ayuda}"/>
+
+            <TextBlock Text="Departamento" Style="{StaticResource Etiqueta}"/>
+            <DockPanel>
+                <Button Content="➕ Nuevo" DockPanel.Dock="Right" MinWidth="0" Margin="8,0,0,0" Click="NuevoDepartamento_Click"/>
+                <ComboBox x:Name="cmbDepartamento" v:Select.Buscable="True" v:Select.Pista="Escriba o elija el departamento"/>
+            </DockPanel>
+
+            <Expander x:Name="expMas" Header="Más opciones (no es obligatorio)" Margin="0,20,0,0" FontSize="17">
+                <StackPanel Margin="8,4,0,0">
+                    <TextBlock Text="¿Cuánto le cuesta a usted?" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtCosto" v:EntradaNumerica.SoloNumeros="True"/>
+                    <TextBlock Text="Lo que usted paga al proveedor. Sirve para saber cuánto gana." Style="{StaticResource Ayuda}"/>
+
+                    <TextBlock Text="IVA" Style="{StaticResource Etiqueta}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="rbIva0" Content="Sin IVA (0%)" GroupName="iva"/>
+                        <RadioButton x:Name="rbIva8" Content="8%" GroupName="iva"/>
+                        <RadioButton x:Name="rbIva16" Content="16%" GroupName="iva"/>
+                    </StackPanel>
+                    <TextBlock Text="Si no sabe, pregunte a su contador." Style="{StaticResource Ayuda}"/>
+
+                    <TextBlock Text="Avisarme cuando queden" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtMinimo" v:EntradaNumerica.SoloNumeros="True"/>
+                    <TextBlock Text="Ejemplo: 5. Cuando queden 5 o menos, el producto saldrá marcado con ⚠. Vacío = no avisar." Style="{StaticResource Ayuda}"/>
+
+                    <TextBlock Text="Número en la báscula de etiquetas" Style="{StaticResource Etiqueta}"/>
+                    <TextBox x:Name="txtPlu"/>
+                    <TextBlock Text="Solo si usa una báscula que imprime etiquetas con código. Si no sabe qué es, déjelo vacío." Style="{StaticResource Ayuda}"/>
+                </StackPanel>
+            </Expander>
+
+            <Border x:Name="panelError" Background="#FDECEA" CornerRadius="8" Padding="12,10" Margin="0,18,0,0" Visibility="Collapsed">
+                <TextBlock x:Name="lblError" Foreground="{StaticResource Peligro}" TextWrapping="Wrap"/>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Content="Cancelar" IsCancel="True"/>
+                <Button x:Name="btnGuardar" Content="✔  Guardar" IsDefault="True" Style="{StaticResource BotonVerde}" MinWidth="150" Click="Guardar_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

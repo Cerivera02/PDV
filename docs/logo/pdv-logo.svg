@@ -1,0 +1,20 @@
+<!-- Logo del PDV. Misma figura que src/PDV.Caja/Recursos/Logo.xaml (lienzo 256x256). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2F72BC"/>
+      <stop offset="1" stop-color="#1F4E79"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#fondo)"/>
+  <path fill="#000" fill-opacity="0.2" d="M76,58 Q76,46 88,46 L176,46 Q188,46 188,58 L188,210 L174,220 L160,210 L146,220 L132,210 L118,220 L104,210 L90,220 L76,210 Z"/>
+  <path fill="#fff" d="M70,52 Q70,40 82,40 L170,40 Q182,40 182,52 L182,204 L168,214 L154,204 L140,214 L126,204 L112,214 L98,204 L84,214 L70,204 Z"/>
+  <g fill="#C5D3E4">
+    <rect x="88" y="62" width="76" height="12" rx="6"/>
+    <rect x="88" y="86" width="54" height="12" rx="6"/>
+    <rect x="88" y="110" width="66" height="12" rx="6"/>
+  </g>
+  <rect x="88" y="136" width="40" height="14" rx="7" fill="#1F4E79"/>
+  <circle cx="180" cy="182" r="42" fill="#1A9E46" stroke="#fff" stroke-width="10"/>
+  <path d="M160,183 L174,197 L200,168" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
